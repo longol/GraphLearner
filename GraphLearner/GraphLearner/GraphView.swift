@@ -36,7 +36,6 @@ class GraphView: UIView {
 
     override func drawRect(rect: CGRect) {
         
-        
         context = UIGraphicsGetCurrentContext()
 
         // FlipContext & Translate
@@ -57,21 +56,19 @@ class GraphView: UIView {
 //        CGContextTranslateCTM(context, translateSize.x + translateDelta.x, -translateSize.y - translateDelta.y)
 //        translateSize = CGPointMake(translateSize.x + translateDelta.x, -translateSize.y - translateDelta.y)
 
-
-
-        drawXSliderLine(context)
-        drawYSliderLine(context)
-        drawIntersectionPoint(context)
-        drawAxis(context)
-        drawTracedLine(context)
-        drawCurrentPoint(context)
-
         if drawBaseline == true {
             drawFormula(context)
         }
         if drawGrids == true {
             drawGrid(context)
         }
+        
+        drawXSliderLine(context)
+        drawYSliderLine(context)
+        drawIntersectionPoint(context)
+        drawAxis(context)
+        drawTracedLine(context)
+        drawCurrentPoint(context)
 
     }
     
@@ -115,6 +112,10 @@ class GraphView: UIView {
                 drawXYBesidesPoint(context, point: point)
             }
             
+            if mainView?.xSliderAuto == false && mainView?.ySliderAuto == false {
+                drawingValues.append(point)
+            }
+            
         }
     }
     
@@ -127,11 +128,18 @@ class GraphView: UIView {
         if let xValue = currentPoint?.x, yValue = currentPoint?.y {
             CGContextSaveGState(context)
             CGContextMoveToPoint(context, CGFloat(xValue), CGFloat(yValue))
+            
+            CGContextSetStrokeColorWithColor(context, UIColor.greenColor().CGColor)
+            CGContextSetFillColorWithColor(context, UIColor.redColor().CGColor)
+            CGContextSetLineWidth(context, 2.0)
             CGContextAddEllipseInRect(context, CGRectMake(CGFloat(xValue-5), CGFloat(yValue-5), 10, 10))
-            CGContextSetStrokeColorWithColor(context, UIColor.clearColor().CGColor)
-            CGContextSetFillColorWithColor(context, UIColor.blueColor().CGColor)
-            CGContextSetLineWidth(context, 0.0)
             CGContextDrawPath(context, CGPathDrawingMode.FillStroke)
+
+            CGContextSetFillColorWithColor(context, UIColor.yellowColor().CGColor)
+            CGContextSetLineWidth(context, 0.0)
+            CGContextAddEllipseInRect(context, CGRectMake(CGFloat(xValue-2), CGFloat(yValue-2), 4, 4))
+            CGContextDrawPath(context, CGPathDrawingMode.FillStroke)
+
             if drawNumbers == true {
                 drawXYBesidesPoint(context, point: currentPoint)
             }
@@ -172,15 +180,13 @@ class GraphView: UIView {
     
     func drawTracedLine(context: CGContextRef) {
        
-        if let point = drawingValues.first {
-           CGContextMoveToPoint(context, point.x, point.y)
-        }
-
-        for point in drawingValues {
-            if point == drawingValues.first {
+        for (index, point) in drawingValues.enumerate() {
+            if index == 0 {
                 CGContextMoveToPoint(context, point.x, point.y)
             }
-            CGContextAddLineToPoint(context, point.x, point.y)
+            else {
+                CGContextAddLineToPoint(context, point.x, point.y)
+            }
         }
         
         CGContextSetStrokeColorWithColor(context, UIColor.yellowColor().CGColor)
@@ -224,16 +230,6 @@ class GraphView: UIView {
     
     func drawAxis(context: CGContextRef) {
         
-        // Draw main graph lines
-        CGContextMoveToPoint(context, 0, CGFloat(-xySpan))
-        CGContextAddLineToPoint(context, 0, CGFloat(xySpan))
-        CGContextMoveToPoint(context, CGFloat(-xySpan), 0)
-        CGContextAddLineToPoint(context, CGFloat(xySpan), 0)
-        CGContextSetStrokeColorWithColor(context,UIColor.blackColor().CGColor)
-        CGContextSetLineWidth(context, 1)
-        CGContextSetLineDash(context, 0, nil, 0)
-        CGContextDrawPath(context, CGPathDrawingMode.FillStroke)
-
         var i = -xySpan
         
         while i < xySpan {
@@ -279,6 +275,16 @@ class GraphView: UIView {
     
         CGContextSetStrokeColorWithColor(context,UIColor.blackColor().CGColor)
         CGContextSetLineWidth(context, 0.5)
+        CGContextSetLineDash(context, 0, nil, 0)
+        CGContextDrawPath(context, CGPathDrawingMode.FillStroke)
+        
+        // Draw main graph lines
+        CGContextMoveToPoint(context, 0, CGFloat(-xySpan))
+        CGContextAddLineToPoint(context, 0, CGFloat(xySpan))
+        CGContextMoveToPoint(context, CGFloat(-xySpan), 0)
+        CGContextAddLineToPoint(context, CGFloat(xySpan), 0)
+        CGContextSetStrokeColorWithColor(context,UIColor.blackColor().CGColor)
+        CGContextSetLineWidth(context, 1.5)
         CGContextSetLineDash(context, 0, nil, 0)
         CGContextDrawPath(context, CGPathDrawingMode.FillStroke)
 
@@ -351,7 +357,7 @@ class GraphView: UIView {
                 CGContextSetLineDash(context, 0, nil, 0)
             }
             else {
-                CGContextSetLineDash(context, 0, [5,5], 2)
+                CGContextSetLineDash(context, 0, [10,5], 2)
             }
             
             let y = yForX(Double(x))
@@ -369,15 +375,16 @@ class GraphView: UIView {
 
         
         CGContextSetStrokeColorWithColor(context,UIColor.blueColor().CGColor)
-        CGContextSetLineWidth(context, 1.5)
+        CGContextSetFillColorWithColor(context, UIColor.clearColor().CGColor)
+        CGContextSetLineWidth(context, 1.8)
         CGContextDrawPath(context, CGPathDrawingMode.FillStroke)
         
-        if let v = mainView {
-            if pickerViewTriggered == false {
-                v.updateDataTable()
-            }
-        }
-        
+//        if let v = mainView {
+//            if pickerViewTriggered == false {
+//                v.updateDataTable()
+//            }
+//        }
+//        
         if drawNumbers == true {
             let x = 0.0
             let y = yForX(x)

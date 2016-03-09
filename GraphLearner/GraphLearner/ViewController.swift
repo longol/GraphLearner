@@ -33,14 +33,9 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     @IBOutlet weak var startButton: UIButton!
     @IBOutlet weak var clearDrawingButton: UIButton!
     @IBOutlet weak var prevButton: UIButton!
-//    @IBOutlet weak var nextButton: UIButton!
     
     @IBOutlet weak var paramView: UIView!
-    @IBOutlet weak var formulaStaticLabel: UILabel!
-    @IBOutlet weak var formulaView: UIView!
     @IBOutlet weak var formulaLabel: UILabel!
-    @IBOutlet weak var formulaCurrentView: UIView!
-    @IBOutlet weak var formulaStaticCurrentLabel: UILabel!
     @IBOutlet weak var formulaCurrentLabel: UILabel!
 
     @IBOutlet weak var slider1Name: UILabel!
@@ -119,6 +114,10 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     }
     
     func pickerView(pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
+        if row >= graphView.drawingValues.count {
+            return NSAttributedString(string: "")
+        }
+        
         let number = graphView.drawingValues[row]
         var string = ""
         var myTitle : NSAttributedString!
@@ -184,17 +183,20 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         updateInterface()
     }
     
-    @IBAction func sliderXChanged() {
-        graphView.drawingValues.append(CGPointMake(CGFloat(xSlider.value), CGFloat(ySlider.value)))
+    @IBAction func sliderXChanged(sender: UISlider) {
+//        if sender == xSlider && ySliderAuto == false {
+//            graphView.drawingValues.append(CGPointMake(CGFloat(xSlider.value), CGFloat(ySlider.value)))
+//        }
         graphView.pickerViewTriggered = false
         xLabel.text = String(format: "X: %.1f", xSlider.value/10)
         graphView.setNeedsDisplay()
         updateDataTable()
-
     }
     
-    @IBAction func sliderYChanged() {
-        graphView.drawingValues.append(CGPointMake(CGFloat(xSlider.value), CGFloat(ySlider.value)))
+    @IBAction func sliderYChanged(sender: UISlider) {
+//        if sender == ySlider && xSliderAuto == false  {
+//            graphView.drawingValues.append(CGPointMake(CGFloat(xSlider.value), CGFloat(ySlider.value)))
+//        }
         graphView.pickerViewTriggered = false
         yLabel.text = String(format: "Y: %.1f", ySlider.value/10)
         graphView.setNeedsDisplay()
@@ -230,13 +232,10 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     }
 
     @IBAction func clearDrawing() {
-        if graphView.drawSinCos == false {
-            xSlider.value = -50
-        }
-        else {
-            xSlider.value = -100
-        }
+
+        xSlider.value = graphView.drawSinCos ? -100 : -50
         ySlider.value = Float(graphView.yForX(Double(xSlider.value)))
+        
         xValueTicker = Double(xSlider.value)
         xLabel.text = "X: -50"
         yLabel.text = "Y: -50"
@@ -329,7 +328,10 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     
     func countDown() {
         instructionsLabel.text = "\(countDownNum)"
-
+        startButton.hidden = true
+        prevButton.hidden = true
+        clearDrawingButton.hidden = true
+        
         if countDownNum > 0 {
             NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "countDown", userInfo: nil, repeats: false)
         }
@@ -342,6 +344,10 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     func countDownStop() {
         countDownNum = 3
         instructionsLabel.text = "\(countDownNum)"
+        startButton.hidden = false
+        prevButton.hidden = false
+        clearDrawingButton.hidden = false
+
     }
     
     func automateSlider() {
@@ -426,8 +432,6 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         graphView.setNeedsDisplay()
     }
     
-    
-    
 //    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
 //        if let touch = touches.first {
 //            firstTouchLocation = touch.locationInView(self.view)
@@ -445,16 +449,38 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
 //    }
 
     func writeFormulas() {
+        
+        var htmlString = ""
+        
         if graphView.drawSinCos == true {
-            formulaLabel.text = "y = a * sin ( b * x + c ) + d"
-            formulaCurrentLabel.text = String(format: "y = %.1f * sin ( %.1f * x + %.1f ) + %.1f", graphView.a/10, graphView.b*10, graphView.c/10, graphView.d/10)
+            htmlString = "<center><font size=5><font color=\"green\">y</font><font color=\"black\"> = </font><font color=\"blue\">a</font><font color=\"black\"> * sin (<font color=\"orange\"> b </font><font color=\"black\"> * x + </font><font color=\"brown\">c</font><font color=\"black\">) + </font><font color=\"purple\">d</font></font></center>"
+            createAttributedString(htmlString, label: formulaLabel)
+            
+            htmlString = String(format: "<center><font size=5><font color=\"green\">y</font><font color=\"black\"> = </font><font color=\"blue\">%.1f</font><font color=\"black\"> * sin (<font color=\"orange\"> %.1f </font><font color=\"black\"> * x + </font><font color=\"brown\">%.1f</font><font color=\"black\">) + </font><font color=\"purple\">%.1f</font></font></center>", graphView.a/10, graphView.b*10, graphView.c/10, graphView.d/10)
+            createAttributedString(htmlString, label: formulaCurrentLabel)
         }
         else {
-            formulaLabel.text = "y = m * x + b"
-            formulaCurrentLabel.text = String(format: "y = %.1f * x + %.1f", graphView.m, graphView.b/10)
-        }
+            //formulaLabel.text = "y = m * x + b"
+            htmlString = "<center><font size=5><font color=\"green\">y</font><font color=\"black\"> = </font><font color=\"blue\">m</font><font color=\"black\"> * </font><font color=\"red\"> x </font><font color=\"black\"> + </font><font color=\"orange\">b</font></font></center>"
+            createAttributedString(htmlString, label: formulaLabel)
 
+            htmlString = String(format:"<center><font size=5><font color=\"green\">y</font><font color=\"black\"> = </font><font color=\"blue\">%.1f</font><font color=\"black\"> * </font><font color=\"red\"> x </font><font color=\"black\"> + </font><font color=\"orange\">%.1f</font></font></center>", graphView.m, graphView.b/10)
+            createAttributedString(htmlString, label: formulaCurrentLabel)
+        }
     }
+    
+    func createAttributedString(htmlString: String, label: UILabel) {
+        let encodedData = htmlString.dataUsingEncoding(NSUTF8StringEncoding)!
+        let attributedOptions = [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType]
+        do {
+            let attributedString = try NSAttributedString(data: encodedData, options: attributedOptions, documentAttributes: nil)
+            label.attributedText = attributedString
+            
+        } catch _ {
+            print("Cannot create attributed String")
+        }
+    }
+
     // MARK: UPDATE INTERFACE
     
     func updateInterface() {
@@ -476,8 +502,6 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         switch currentStage {
         case 0:
             instructionsLabel.text = "Let me show you how this works! \n\nWe have the blue line to follow.\n\nUse the red and green sliders. \n\nPress start to see a demonstration."
-            formulaView.hidden = true
-            formulaCurrentView.hidden = true
             graphView.m = 1
             graphView.b = 0
             graphView.drawSinCos = false
@@ -501,30 +525,34 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             xSlider.userInteractionEnabled = false
             xValueTicker = -50
             prevButton.hidden = true
-            clearDrawingButton.hidden = true
+            speedSliderAction()
             showInstructions()
        case 1:
-            clearDrawing()
             startButton.hidden = false
             prevButton.hidden = false
             settingsView.hidden = false
             xSliderAuto = false
             xSlider.userInteractionEnabled = true
             instructionsLabel.text = "Got it? \n\nNow it's your turn. \n\nI will move green and you move the red. \n\n Press Start when your are ready!\n\n\nYou can change the speed of how fast I go below."
+            clearDrawingButton.hidden = true
+            speedSlider.value = 1
+            speedSliderAction()
+            clearDrawing()
             showInstructions()
         case 2:
             startButton.hidden = false
             prevButton.hidden = false
-            
             xSliderAuto = true
             ySliderAuto = false
             ySlider.userInteractionEnabled = true
             xSlider.userInteractionEnabled = false
             instructionsLabel.text = "Great - let's switch! \n\nNow I control the red.\n\nYou control the green.\n\n"
+            clearDrawingButton.hidden = true
+            speedSlider.value = 1
+            speedSliderAction()
+            clearDrawing()
             showInstructions()
         case 3:
-            formulaView.hidden = true
-            formulaCurrentView.hidden = true
             graphView.m = 1
             graphView.b = 0
             graphView.drawSinCos = false
@@ -550,9 +578,12 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             autoYButton.hidden = false
             phase2Button.hidden = false
             phase2View.hidden = false
-            formulaStaticLabel.hidden = false
             formulaLabel.text = "y = x"
             instructionsLabel.text = "Awesome!\n\nNow you control both!\n\nNotice we now see numbers all over.\n\nX axis is RED and the Y axis is GREEN.\n\nWe can see values for your drawing.\n\nWe can see the formula of the blue line!"
+            clearDrawingButton.hidden = true
+            speedSlider.value = 1
+            speedSliderAction()
+            clearDrawing()
             showInstructions()
         case 4:
             graphView.drawNumbers = true
@@ -585,9 +616,8 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             slider2Name.textColor = UIColor.orangeColor()
             phase3Button.hidden = false
             phase3View.hidden = false
-            formulaView.hidden = false
-            formulaCurrentView.hidden = false
             paramView.hidden = false
+            clearDrawing()
             writeFormulas()
             showInstructions()
         case 5:
@@ -658,9 +688,6 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             phase3Button.hidden = false
             phase3View.hidden = false
             
-            formulaView.hidden = false
-            formulaCurrentView.hidden = false
-
             writeFormulas()
             showInstructions()
 
@@ -684,27 +711,18 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     @IBAction func startButtonAction() {
         switch currentStage {
         case 0:
-            startButton.hidden = true
-            prevButton.hidden = true
             xSliderAuto = true
             ySliderAuto = true
             countDown()
         case 1:
-            startButton.hidden = true
-            prevButton.hidden = true
             xSliderAuto = false
             ySliderAuto = true
             countDown()
         case 2:
-            startButton.hidden = true
-            prevButton.hidden = true
             xSliderAuto = true
             ySliderAuto = false
             countDown()
         case 3:
-            startButton.hidden = false
-            prevButton.hidden = false
-            clearDrawingButton.hidden = false
             instructionsLabel.text = "Play with AutoX and AutoY"
             hideInstructions()
         case 4:
@@ -732,14 +750,20 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         switch currentStage {
         case 0:
             instructionsLabel.text = "Observe how the red and the green move at the same speed!"
+            clearDrawingButton.hidden = false
         case 1:
             instructionsLabel.text = "Move the red slider at the same speed as I do."
+            clearDrawingButton.hidden = false
         case 2:
             instructionsLabel.text = "GO!"
         default:
             break
         }
         
+        startButton.hidden = false
+        prevButton.hidden = false
+        clearDrawingButton.hidden = false
+
         NSNotificationCenter.defaultCenter().postNotificationName("countDownDone", object: nil)
     }
     
