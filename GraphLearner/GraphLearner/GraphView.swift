@@ -109,7 +109,6 @@ class GraphView: UIView {
             CGContextSetLineWidth(context, 0.0)
             CGContextDrawPath(context, CGPathDrawingMode.FillStroke)
             let point = CGPointMake(CGFloat(xValue), CGFloat(yValue))
-            drawingValues.append(point)
             
             // Draw x,y values on intersection
             if drawNumbers == true {
@@ -174,7 +173,7 @@ class GraphView: UIView {
     func drawTracedLine(context: CGContextRef) {
        
         if let point = drawingValues.first {
-            CGContextMoveToPoint(context, point.x, point.y)
+           CGContextMoveToPoint(context, point.x, point.y)
         }
 
         for point in drawingValues {

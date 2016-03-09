@@ -89,7 +89,9 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         NSTimer.scheduledTimerWithTimeInterval(0.3, target: self, selector: "showInstructions", userInfo: nil, repeats: false)
         
         for view in self.view.subviews {
-            view.layer.cornerRadius = 10
+            if view != graphView && view != instructionsLabel {
+                view.layer.cornerRadius = 10
+            }
         }
     }
 
@@ -183,13 +185,16 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     }
     
     @IBAction func sliderXChanged() {
+        graphView.drawingValues.append(CGPointMake(CGFloat(xSlider.value), CGFloat(ySlider.value)))
         graphView.pickerViewTriggered = false
         xLabel.text = String(format: "X: %.1f", xSlider.value/10)
         graphView.setNeedsDisplay()
         updateDataTable()
+
     }
     
     @IBAction func sliderYChanged() {
+        graphView.drawingValues.append(CGPointMake(CGFloat(xSlider.value), CGFloat(ySlider.value)))
         graphView.pickerViewTriggered = false
         yLabel.text = String(format: "Y: %.1f", ySlider.value/10)
         graphView.setNeedsDisplay()
@@ -225,9 +230,14 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     }
 
     @IBAction func clearDrawing() {
-        xSlider.value = -50
-        ySlider.value = -50
-        xValueTicker = -50
+        if graphView.drawSinCos == false {
+            xSlider.value = -50
+        }
+        else {
+            xSlider.value = -100
+        }
+        ySlider.value = Float(graphView.yForX(Double(xSlider.value)))
+        xValueTicker = Double(xSlider.value)
         xLabel.text = "X: -50"
         yLabel.text = "Y: -50"
         cancelAnimations = true
@@ -300,6 +310,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             self.instructionsLabel.frame.size.height = self.graphView.frame.origin.y + self.graphView.frame.height - self.instructionLabelClosedFrame.origin.y
             self.instructionsLabel.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.7)
         }
+        
     }
     
     func hideInstructions() {
@@ -320,7 +331,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         instructionsLabel.text = "\(countDownNum)"
 
         if countDownNum > 0 {
-            NSTimer.scheduledTimerWithTimeInterval(1/2, target: self, selector: "countDown", userInfo: nil, repeats: false)
+            NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "countDown", userInfo: nil, repeats: false)
         }
         else {
             countDownEnded()
@@ -338,10 +349,10 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         var animationSpeed : Double = 0.0
         
         if speedSlider.value == 0 {
-            animationSpeed = 0.5
+            animationSpeed = 1
         }
         if speedSlider.value == 1 {
-            animationSpeed = 1.0
+            animationSpeed = 2.0
         }
         if speedSlider.value == 2 {
             animationSpeed = 10.0
@@ -358,10 +369,11 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
 
         if ySliderAuto == true && xSliderAuto == true {
             
+            ySlider.setValue(Float(y), animated: true)
             xSlider.setValue(xSlider.value, animated: true)
             
-            ySlider.setValue(Float(y), animated: true)
-            
+            graphView.drawingValues.append(CGPointMake(CGFloat(xSlider.value), CGFloat(ySlider.value)))
+
             if (xSlider.value < Float(graphView.frame.width) - Float(graphView.translateValue)) &&
                 (ySlider.value < Float(graphView.frame.height) - Float(graphView.translateValue)) {
                 NSTimer.scheduledTimerWithTimeInterval(1/30.0, target: self, selector: "automateSlider", userInfo: nil, repeats: false)
@@ -382,6 +394,8 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             else {
                 sliderAnimationEnded()
             }
+
+            graphView.drawingValues.append(CGPointMake(CGFloat(xSlider.value), CGFloat(ySlider.value)))
             xSlider.value += Float(animationSpeed)
         }
         else if ySliderAuto == true {
@@ -402,6 +416,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
                 sliderAnimationEnded()
             }
             
+            graphView.drawingValues.append(CGPointMake(CGFloat(xSlider.value), CGFloat(ySlider.value)))
             xValueTicker += animationSpeed
         }
 
