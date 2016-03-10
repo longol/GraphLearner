@@ -34,6 +34,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     @IBOutlet weak var startButton: UIButton!
     @IBOutlet weak var clearDrawingButton: UIButton!
     @IBOutlet weak var prevButton: UIButton!
+    @IBOutlet weak var nextButton: UIButton!
     
     @IBOutlet weak var paramView: UIView!
     @IBOutlet weak var formulaLabel: UILabel!
@@ -515,6 +516,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         cancelAnimations = false
         currentStageLabel.text = "Stage: \(currentStage)"
         prevButton.hidden = false
+        nextButton.hidden = false
         clearDrawingButton.hidden = false
         
         // Adjust visuals
@@ -549,6 +551,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             speedSliderAction()
             showInstructions()
             prevButton.hidden = true
+            nextButton.hidden = true
        case 1:
             settingsView.hidden = false
             xSliderAuto = false
@@ -690,11 +693,14 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
 
             phase3Button.hidden = false
             phase3View.hidden = false
-            
+
+            nextButton.hidden = true
+
             writeFormulas()
             showInstructions()
 
         default:
+            
             break
         }
         

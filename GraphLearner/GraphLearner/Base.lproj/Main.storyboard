@@ -429,6 +429,7 @@
                         <outlet property="gridSwitch" destination="rng-8L-U1n" id="X74-HI-Ex3"/>
                         <outlet property="instructionsLabel" destination="7XK-2G-CGJ" id="dba-rB-9Qa"/>
                         <outlet property="intructionsBottomLabel" destination="Q68-oW-JLs" id="MAf-jJ-NqK"/>
+                        <outlet property="nextButton" destination="hZn-wC-XbI" id="P7j-aO-GT6"/>
                         <outlet property="paramView" destination="dSr-ei-StV" id="Mas-X5-HaA"/>
                         <outlet property="phase1Button" destination="cHJ-Xc-UFb" id="ko1-dY-pWh"/>
                         <outlet property="phase1View" destination="CIi-s5-0k0" id="D2A-cv-IC3"/>
