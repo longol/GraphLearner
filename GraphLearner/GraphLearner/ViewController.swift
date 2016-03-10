@@ -64,7 +64,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     var colorA = UIColor(red: 0, green: 206/255, blue: 209/255, alpha: 1) // DarkTurquoise 0,206,209
     var colorB = UIColor(red: 148/255, green: 0, blue: 211/255, alpha: 1) // DarkViolet 148,0,211
     var colorC = UIColor(red: 47/255, green: 79/255, blue: 79/255, alpha: 1) // DarkSlateGrey 47,79,79
-    var colorD = UIColor(red: 0, green: 191/255, blue: 255/255, alpha: 1) // DeepSkyBlue 0,191,255
+    var colorD = UIColor(red: 1, green: 20/255, blue: 147/255, alpha: 1) // DeepPink 255,20,147
 
     var currentStage = 0
     var countDownNum = 3
@@ -411,7 +411,12 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             ySlider.setValue(Float(y), animated: true)
             
             if ySlider.value < Float(graphView.frame.height) - Float(graphView.translateValue) {
-                NSTimer.scheduledTimerWithTimeInterval(1/30, target: self, selector: "automateSlider", userInfo: nil, repeats: false)
+                if graphView.drawSinCos == true && xSlider.value < Float(graphView.frame.width) - Float(graphView.translateValue) {
+                    NSTimer.scheduledTimerWithTimeInterval(1/30, target: self, selector: "automateSlider", userInfo: nil, repeats: false)
+                }
+                else {
+                    sliderAnimationEnded()
+                }
             }
             else {
                 sliderAnimationEnded()
@@ -455,10 +460,10 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             createAttributedString(htmlString, label: formulaCurrentLabel)
         }
         else {
-            htmlString = "<center><b><font size=5><font color=\"GreenYellow\">y </font><font color=\"white\">= </font><font color=\"DarkTurquoise\">a </font><font color=\"white\">* sin ( <font color=\"DarkViolet\">b </font><font color=\"white\">* </font><font color=\"red\">x </font><font color=\"white\">+ </font><font color=\"DarkSlateGrey\">c </font><font color=\"white\">) + </font><font color=\"DeepSkyBlue\"> d</font></font></b></center>"
+            htmlString = "<center><b><font size=5><font color=\"GreenYellow\">y </font><font color=\"white\">= </font><font color=\"DarkTurquoise\">a </font><font color=\"white\">* sin ( <font color=\"DarkViolet\">b </font><font color=\"white\">* </font><font color=\"red\">x </font><font color=\"white\">+ </font><font color=\"DarkSlateGrey\">c </font><font color=\"white\">) + </font><font color=\"DeepPink\"> d</font></font></b></center>"
             createAttributedString(htmlString, label: formulaLabel)
             
-            htmlString = String(format: "<center><b><font size=5><font color=\"GreenYellow\">y</font><font color=\"white\">=</font><font color=\"DarkTurquoise\">%.1f</font><font color=\"white\"> * sin (<font color=\"DarkViolet\">%.2f</font><font color=\"white\">*<font color=\"red\">x</font><font color=\"white\">+</font><font color=\"DarkSlateGrey\">%.1f</font><font color=\"white\">)+</font><font color=\"DeepSkyBlue\">%.1f</font></font></b></center>", graphView.a/10, graphView.b*10, graphView.c/10, graphView.d/10)
+            htmlString = String(format: "<center><b><font size=5><font color=\"GreenYellow\">y</font><font color=\"white\">=</font><font color=\"DarkTurquoise\">%.1f</font><font color=\"white\"> * sin (<font color=\"DarkViolet\">%.2f</font><font color=\"white\">*<font color=\"red\">x</font><font color=\"white\">+</font><font color=\"DarkSlateGrey\">%.1f</font><font color=\"white\">)+</font><font color=\"DeepPink\">%.1f</font></font></b></center>", graphView.a/10, graphView.b*10, graphView.c/10, graphView.d/10)
             createAttributedString(htmlString, label: formulaCurrentLabel)
         }
     }
@@ -486,6 +491,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         graphView.ySlider = ySlider
         graphView.mainView = self
         graphView.translateSize = CGPointMake(100, 100)
+        graphView.translateValue = 100
         
         slider1Slider.thumbTintColor = colorA
         slider2Slider.thumbTintColor = colorB
@@ -522,6 +528,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             graphView.d  = 0
             graphView.m  = 1
             graphView.translateSize  = CGPointMake(100, 100)
+            graphView.translateValue = 100
             slider1Slider.maximumValue  = 10
             slider1Slider.minimumValue  = -10
             slider1Slider.value  = Float(graphView.b)
@@ -577,6 +584,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             graphView.d  = 0
             graphView.m  = 1
             graphView.translateSize  = CGPointMake(100, 100)
+            graphView.translateValue = 100
             slider1Slider.maximumValue  = 10
             slider1Slider.minimumValue  = -10
             slider1Slider.value  = Float(graphView.b)
@@ -630,6 +638,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             graphView.d  = 0
             graphView.m  = 1
             graphView.translateSize  = CGPointMake(100, 100)
+            graphView.translateValue = 100
             slider1Slider.maximumValue  = 10
             slider1Slider.minimumValue  = -10
             slider1Slider.value  = Float(graphView.b)
@@ -683,6 +692,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             graphView.d  = 0
             graphView.m  = 1
             graphView.translateSize  = CGPointMake(100, 100)
+            graphView.translateValue = 100
             slider1Slider.maximumValue  = 10
             slider1Slider.minimumValue  = -10
             slider1Slider.value  = Float(graphView.b)
@@ -737,6 +747,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             graphView.d  = 0
             graphView.m  = 0.2
             graphView.translateSize  = CGPointMake(100, 100)
+            graphView.translateValue = 100
             slider1Slider.maximumValue  = 10
             slider1Slider.minimumValue  = -10
             slider1Slider.value  = Float(graphView.b)
@@ -790,6 +801,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             graphView.d  = 8.0
             graphView.m  = 1
             graphView.translateSize  = CGPointMake(150, graphView.frame.height/2)
+            graphView.translateValue = 150
             slider1Slider.maximumValue  = 400
             slider1Slider.minimumValue  = 0
             slider1Slider.value  = Float(graphView.a)

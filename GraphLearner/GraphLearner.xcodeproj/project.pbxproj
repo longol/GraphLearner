@@ -18,6 +18,10 @@
 		9A31A8921C8E11CF00725F04 /* x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A31A88A1C8E11CF00725F04 /* x.png */; };
 		9A31A8961C8F81E700725F04 /* buttonRed.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A31A8951C8F81E700725F04 /* buttonRed.png */; };
 		9A31A8981C8F827B00725F04 /* buttonGreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A31A8971C8F827B00725F04 /* buttonGreen.png */; };
+		9A7717831C91533300F41663 /* wood _texture3178.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9A7717821C91533300F41663 /* wood _texture3178.jpg */; };
+		9A7717851C9153B000F41663 /* 708266autofoliecarbonswfkfkst011001061.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9A7717841C9153B000F41663 /* 708266autofoliecarbonswfkfkst011001061.jpg */; };
+		9A7717871C91540100F41663 /* stock-vector-seamless-pattern-of-the-octagon-net-vector-art-242420317.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9A7717861C91540100F41663 /* stock-vector-seamless-pattern-of-the-octagon-net-vector-art-242420317.jpg */; };
+		9A7717891C91546D00F41663 /* carbon_texture1870.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9A7717881C91546D00F41663 /* carbon_texture1870.jpg */; };
 		9AD1BE261C86BC0E009FDD96 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD1BE251C86BC0E009FDD96 /* AppDelegate.swift */; };
 		9AD1BE281C86BC0E009FDD96 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD1BE271C86BC0E009FDD96 /* ViewController.swift */; };
 		9AD1BE2B1C86BC0E009FDD96 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9AD1BE291C86BC0E009FDD96 /* Main.storyboard */; };
@@ -37,6 +41,10 @@
 		9A31A88A1C8E11CF00725F04 /* x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = x.png; path = images/x.png; sourceTree = "<group>"; };
 		9A31A8951C8F81E700725F04 /* buttonRed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = buttonRed.png; path = images/buttonRed.png; sourceTree = "<group>"; };
 		9A31A8971C8F827B00725F04 /* buttonGreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = buttonGreen.png; path = images/buttonGreen.png; sourceTree = "<group>"; };
+		9A7717821C91533300F41663 /* wood _texture3178.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "wood _texture3178.jpg"; sourceTree = "<group>"; };
+		9A7717841C9153B000F41663 /* 708266autofoliecarbonswfkfkst011001061.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 708266autofoliecarbonswfkfkst011001061.jpg; sourceTree = "<group>"; };
+		9A7717861C91540100F41663 /* stock-vector-seamless-pattern-of-the-octagon-net-vector-art-242420317.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "stock-vector-seamless-pattern-of-the-octagon-net-vector-art-242420317.jpg"; sourceTree = "<group>"; };
+		9A7717881C91546D00F41663 /* carbon_texture1870.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = carbon_texture1870.jpg; sourceTree = "<group>"; };
 		9AD1BE221C86BC0E009FDD96 /* GraphLearner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GraphLearner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9AD1BE251C86BC0E009FDD96 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9AD1BE271C86BC0E009FDD96 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -60,6 +68,10 @@
 		9A13D4C81C89149000AB023E /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9A7717881C91546D00F41663 /* carbon_texture1870.jpg */,
+				9A7717861C91540100F41663 /* stock-vector-seamless-pattern-of-the-octagon-net-vector-art-242420317.jpg */,
+				9A7717841C9153B000F41663 /* 708266autofoliecarbonswfkfkst011001061.jpg */,
+				9A7717821C91533300F41663 /* wood _texture3178.jpg */,
 				9A31A8951C8F81E700725F04 /* buttonRed.png */,
 				9A31A8971C8F827B00725F04 /* buttonGreen.png */,
 				9A31A8831C8E11CF00725F04 /* asinx.png */,
@@ -164,11 +176,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A7717851C9153B000F41663 /* 708266autofoliecarbonswfkfkst011001061.jpg in Resources */,
+				9A7717891C91546D00F41663 /* carbon_texture1870.jpg in Resources */,
 				9A31A8921C8E11CF00725F04 /* x.png in Resources */,
 				9A31A8981C8F827B00725F04 /* buttonGreen.png in Resources */,
+				9A7717831C91533300F41663 /* wood _texture3178.jpg in Resources */,
 				9AD1BE301C86BC0E009FDD96 /* LaunchScreen.storyboard in Resources */,
 				9A31A88E1C8E11CF00725F04 /* sin(bx).png in Resources */,
 				9AD1BE2D1C86BC0E009FDD96 /* Assets.xcassets in Resources */,
+				9A7717871C91540100F41663 /* stock-vector-seamless-pattern-of-the-octagon-net-vector-art-242420317.jpg in Resources */,
 				9A31A88F1C8E11CF00725F04 /* sin(bx+c).png in Resources */,
 				9AD1BE2B1C86BC0E009FDD96 /* Main.storyboard in Resources */,
 				9A31A88C1C8E11CF00725F04 /* sin(bx+c) +d.png in Resources */,
@@ -305,7 +321,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = GraphLearner/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lucaslongo.GraphLearner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -321,7 +337,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = GraphLearner/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lucaslongo.GraphLearner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
