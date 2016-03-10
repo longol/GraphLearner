@@ -13,9 +13,9 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     @IBOutlet weak var stageSegmentedControl: UISegmentedControl!
     @IBOutlet weak var graphView: GraphView!
 
-    @IBOutlet weak var instructionsLabel: UILabel!
-    @IBOutlet weak var intructionsBottomLabel: UILabel!
     @IBOutlet weak var currentStageLabel: UILabel!
+    @IBOutlet weak var instructionsLabel: UILabel!
+    @IBOutlet weak var instructionsBottomLabel: UILabel!
 
     @IBOutlet weak var phase1Button: UIButton!
     @IBOutlet weak var phase2Button: UIButton!
@@ -61,7 +61,11 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     @IBOutlet weak var speedSlider: UISlider!
     @IBOutlet weak var speedSliderLabel: UILabel!
 
-    
+    var colorA = UIColor(red: 0, green: 206/255, blue: 209/255, alpha: 1) // DarkTurquoise 0,206,209
+    var colorB = UIColor(red: 148/255, green: 0, blue: 211/255, alpha: 1) // DarkViolet 148,0,211
+    var colorC = UIColor(red: 47/255, green: 79/255, blue: 79/255, alpha: 1) // DarkSlateGrey 47,79,79
+    var colorD = UIColor(red: 0, green: 191/255, blue: 255/255, alpha: 1) // DeepSkyBlue 0,191,255
+
     var currentStage = 0
     var countDownNum = 3
     var cancelAnimations = false
@@ -69,59 +73,20 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     var ySliderAuto = false
     var xValueTicker = 0.0
     var instructionLabelClosedFrame : CGRect!
-//    var firstTouchLocation : CGPoint?
-    
-    var colorA = UIColor(red: 0, green: 206/255, blue: 209/255, alpha: 1) // DarkTurquoise 0,206,209
-    var colorB = UIColor(red: 148/255, green: 0, blue: 211/255, alpha: 1) // DarkViolet 148,0,211
-    var colorC = UIColor(red: 47/255, green: 79/255, blue: 79/255, alpha: 1) // DarkSlateGrey 47,79,79
-    var colorD = UIColor(red: 0, green: 191/255, blue: 255/255, alpha: 1) // DeepSkyBlue 0,191,255
+    var stageInstructionsPresented = [String]()
+
 
     // MARK: VIEW DID LOAD
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
         instructionLabelClosedFrame = instructionsLabel.frame
-        
-        
-        ySlider.transform = CGAffineTransformMakeRotation(CGFloat(-M_PI_2))
-        graphView.xSlider = xSlider
-        graphView.ySlider = ySlider
-        graphView.mainView = self
-        graphView.translateSize = CGPointMake(100, 100)
-        
-        slider1Slider.thumbTintColor = colorA
-        slider2Slider.thumbTintColor = colorB
-        slider3Slider.thumbTintColor = colorC
-        slider4Slider.thumbTintColor = colorD
-        
-        slider1Slider.minimumTrackTintColor = colorA
-        slider2Slider.minimumTrackTintColor = colorB
-        slider3Slider.minimumTrackTintColor = colorC
-        slider4Slider.minimumTrackTintColor = colorD
-        
-        slider1Name.textColor = colorA
-        slider2Name.textColor = colorB
-        slider3Name.textColor = colorC
-        slider4Name.textColor = colorD
-
-        slider1Value.textColor = colorA
-        slider2Value.textColor = colorB
-        slider3Value.textColor = colorC
-        slider4Value.textColor = colorD
-
-        for view in self.view.subviews {
-            if view != graphView && view != instructionsLabel {
-                view.layer.cornerRadius = 10
-            }
-        }
 
         updateInterface()
-        clearDrawing()
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"automateSlider", name: "countDownDone", object: nil)
 
-        NSTimer.scheduledTimerWithTimeInterval(0.3, target: self, selector: "showInstructions", userInfo: nil, repeats: false)
+        NSTimer.scheduledTimerWithTimeInterval(0.3, target: self, selector: "showInstructions:", userInfo: nil, repeats: false)
         
     }
 
@@ -193,15 +158,15 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     
     @IBAction func autoXAction() {
         clearDrawing()
-        showInstructions()
+        showInstructions(true)
         countDown()
         xSliderAuto = true
     }
     
     @IBAction func autoYAction() {
         clearDrawing()
-        showInstructions()
-        countDown()        
+        showInstructions(true)
+        countDown()
         ySliderAuto = true
     }
 
@@ -318,7 +283,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             }
             if sender == slider2Slider {
                 graphView.b = Double(sender.value)
-                slider2Value.text = String(format: "%.1f", sender.value*10)
+                slider2Value.text = String(format: "%.2f", sender.value*10)
             }
             if sender == slider3Slider {
                 graphView.c = Double(sender.value)
@@ -338,26 +303,28 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     // MARK: MY FUNCTIONS
 
 
-    func showInstructions() {
-        instructionsLabel.font = UIFont.systemFontOfSize(30)
-        UIView.animateWithDuration(0.3) { () -> Void in
-            self.instructionsLabel.frame.size.height = self.graphView.frame.origin.y + self.graphView.frame.height - self.instructionLabelClosedFrame.origin.y
-            self.instructionsLabel.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.7)
+    func showInstructions(forceShow: Bool) {
+        
+        switch currentStage {
+        case 3...5:
+            if stageInstructionsPresented.contains("\(currentStage)") == true && forceShow == false {
+                return
+            }
+        default:
+            break
         }
         
+        stageInstructionsPresented.append("\(currentStage)")
+    
+        UIView.animateWithDuration(0.3) { () -> Void in
+            self.instructionsLabel.alpha = 1
+        }
     }
     
     func hideInstructions() {
-        instructionsLabel.font = UIFont.systemFontOfSize(17)
         
-        UIView.animateWithDuration(0.3, animations: { () -> Void in
-            self.instructionsLabel.alpha = 0
-            }) { (end) -> Void in
-                self.instructionsLabel.frame.size.height = self.instructionLabelClosedFrame.height
-                UIView.animateWithDuration(0.3) { () -> Void in
-                    self.instructionsLabel.alpha = 1
-                    self.instructionsLabel.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
-                }
+        UIView.animateWithDuration(0.3) { () -> Void in
+           self.instructionsLabel.alpha = 0
         }
     }
     
@@ -480,19 +447,18 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         
         var htmlString = ""
         
-        if graphView.drawSinCos == true {
-            htmlString = "<center><b><font size=5><font color=\"GreenYellow\">y </font><font color=\"white\">= </font><font color=\"DarkTurquoise\">a </font><font color=\"white\">* sin ( <font color=\"DarkViolet\">b </font><font color=\"white\">* </font><font color=\"red\">x </font><font color=\"white\">+ </font><font color=\"DarkSlateGrey\">c </font><font color=\"white\">) + </font><font color=\"DeepSkyBlue\"> d</font></font></b></center>"
+        if graphView.drawSinCos == false {
+            htmlString = "<center><b><font size=5><font color=\"GreenYellow\">y </font><font color=\"white\">= </font><font color=\"DarkTurquoise\">m </font><font color=\"white\">* </font><font color=\"red\">x </font><font color=\"white\">+ </font><font color=\"DarkViolet\">b</font></font><b></center>"
             createAttributedString(htmlString, label: formulaLabel)
             
-            htmlString = String(format: "<center><b><font size=5><font color=\"GreenYellow\">y</font><font color=\"white\">=</font><font color=\"DarkTurquoise\">%.1f</font><font color=\"white\"> * sin (<font color=\"DarkViolet\">%.1f</font><font color=\"white\">*<font color=\"red\">x</font><font color=\"white\">+</font><font color=\"DarkSlateGrey\">%.1f</font><font color=\"white\">)+</font><font color=\"DeepSkyBlue\">%.1f</font></font></b></center>", graphView.a/10, graphView.b*10, graphView.c/10, graphView.d/10)
+            htmlString = String(format:"<center><b><font size=5><font color=\"GreenYellow\">y</font><font color=\"white\">=</font><font color=\"DarkTurquoise\">%.1f</font><font color=\"white\">*</font><font color=\"red\">x</font><font color=\"white\">+</font><font color=\"DarkViolet\">%.1f</font></font><b></center>", graphView.m, graphView.b/10)
             createAttributedString(htmlString, label: formulaCurrentLabel)
         }
         else {
-            //formulaLabel.text = "y = m * x + b"
-            htmlString = "<center><b><font size=5><font color=\"GreenYellow\">y </font><font color=\"white\">= </font><font color=\"DarkTurquoise\">m </font><font color=\"white\">* </font><font color=\"red\">x </font><font color=\"white\">+ </font><font color=\"DarkViolet\">b</font></font><b></center>"
+            htmlString = "<center><b><font size=5><font color=\"GreenYellow\">y </font><font color=\"white\">= </font><font color=\"DarkTurquoise\">a </font><font color=\"white\">* sin ( <font color=\"DarkViolet\">b </font><font color=\"white\">* </font><font color=\"red\">x </font><font color=\"white\">+ </font><font color=\"DarkSlateGrey\">c </font><font color=\"white\">) + </font><font color=\"DeepSkyBlue\"> d</font></font></b></center>"
             createAttributedString(htmlString, label: formulaLabel)
-
-            htmlString = String(format:"<center><b><font size=5><font color=\"GreenYellow\">y</font><font color=\"white\">=</font><font color=\"DarkTurquoise\">%.1f</font><font color=\"white\">*</font><font color=\"red\">x</font><font color=\"white\">+</font><font color=\"DarkViolet\">%.1f</font></font><b></center>", graphView.m, graphView.b/10)
+            
+            htmlString = String(format: "<center><b><font size=5><font color=\"GreenYellow\">y</font><font color=\"white\">=</font><font color=\"DarkTurquoise\">%.1f</font><font color=\"white\"> * sin (<font color=\"DarkViolet\">%.2f</font><font color=\"white\">*<font color=\"red\">x</font><font color=\"white\">+</font><font color=\"DarkSlateGrey\">%.1f</font><font color=\"white\">)+</font><font color=\"DeepSkyBlue\">%.1f</font></font></b></center>", graphView.a/10, graphView.b*10, graphView.c/10, graphView.d/10)
             createAttributedString(htmlString, label: formulaCurrentLabel)
         }
     }
@@ -510,201 +476,372 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     }
 
     // MARK: UPDATE INTERFACE
-    
     func updateInterface() {
-        
-        cancelAnimations = false
         currentStageLabel.text = "Stage: \(currentStage)"
-        prevButton.hidden = false
-        nextButton.hidden = false
-        clearDrawingButton.hidden = false
+        clearDrawing()
+        cancelAnimations = false
         
-        // Adjust visuals
+        ySlider.transform = CGAffineTransformMakeRotation(CGFloat(-M_PI_2))
+        graphView.xSlider = xSlider
+        graphView.ySlider = ySlider
+        graphView.mainView = self
+        graphView.translateSize = CGPointMake(100, 100)
+        
+        slider1Slider.thumbTintColor = colorA
+        slider2Slider.thumbTintColor = colorB
+        slider3Slider.thumbTintColor = colorC
+        slider4Slider.thumbTintColor = colorD
+        
+        slider1Slider.minimumTrackTintColor = colorA
+        slider2Slider.minimumTrackTintColor = colorB
+        slider3Slider.minimumTrackTintColor = colorC
+        slider4Slider.minimumTrackTintColor = colorD
+        
+        slider1Name.textColor = colorA
+        slider2Name.textColor = colorB
+        slider3Name.textColor = colorC
+        slider4Name.textColor = colorD
+        
+        slider1Value.textColor = colorA
+        slider2Value.textColor = colorB
+        slider3Value.textColor = colorC
+        slider4Value.textColor = colorD
+        
+        for view in self.view.subviews {
+            if view != graphView && view != instructionsLabel {
+                view.layer.cornerRadius = 10
+            }
+        }
+        
+        // Adjust for stages
         switch currentStage {
         case 0:
-            instructionsLabel.text = "Let me show you how this works! \n\nWe have the blue line to follow.\n\nUse the red and green sliders. \n\nPress start to see a demonstration."
-            intructionsBottomLabel.hidden = true
-            graphView.m = 1
-            graphView.b = 0
-            graphView.drawSinCos = false
-            graphView.drawNumbers = false
-            phase1Button.hidden = true
-            phase1View.hidden = true
-            phase2Button.hidden = true
-            phase2View.hidden = true
-            phase3Button.hidden = true
-            phase3View.hidden = true
-            autoXButton.hidden = true
-            autoYButton.hidden = true
-            drawingTableView.hidden = true
-            paramView.hidden = true
-            xLabel.hidden = true
-            yLabel.hidden = true
-            settingsView.hidden = true
-            clearDrawingButton.hidden = true
-            speedSlider.value = 2
-            xSliderAuto = true
-            ySliderAuto = true
-            ySlider.userInteractionEnabled = false
-            xSlider.userInteractionEnabled = false
-            xValueTicker = -50
-            speedSliderAction()
-            showInstructions()
-            prevButton.hidden = true
-            nextButton.hidden = true
-       case 1:
-            settingsView.hidden = false
-            xSliderAuto = false
-            xSlider.userInteractionEnabled = true
-            instructionsLabel.text = "Got it? \n\nNow it's your turn. \n\nI will move green and you move the red. \n\n Press Start when your are ready!\n\n\nYou can change the speed of how fast I go below."
+            graphView.a  = 0
+            graphView.b  = 0
+            graphView.c  = 0
+            graphView.d  = 0
+            graphView.m  = 1
+            graphView.translateSize  = CGPointMake(100, 100)
+            slider1Slider.maximumValue  = 10
+            slider1Slider.minimumValue  = -10
+            slider1Slider.value  = Float(graphView.b)
+            slider2Slider.maximumValue  = -100
+            slider2Slider.minimumValue  = 400
+            slider2Slider.value  = Float(graphView.b)
+            slider3Slider.maximumValue  = 10
+            slider3Slider.minimumValue  = -10
+            slider3Slider.value  = Float(graphView.c)
+            slider4Slider.maximumValue  = 400
+            slider4Slider.minimumValue  = -200
+            slider4Slider.value  = Float(graphView.d)
+            xSlider.value  = -50
+            xValueTicker  = -50
+            ySlider.value  = Float(graphView.yForX(Double(xSlider.value)))
+            instructionsLabel.text  = "Let me show you how this works! \n\nWe have the blue line to follow.\n\nUse the red and green sliders. \n\nPress start to see a demonstration."
+            slider1Name.text  = "m"
+            slider1Value.text  = String(format: "%.1f", graphView.m)
+            slider2Value.text  = String(format: "%.1f", graphView.b)
+            slider3Value.text  = String(format: "%.1f", graphView.c/10)
+            slider4Value.text  = String(format: "%.1f", graphView.d/10)
+            autoXButton.hidden  = true
+            autoYButton.hidden  = true
+            clearDrawingButton.hidden  = true
+            drawingTableView.hidden  = true
+            graphView.drawIntersectionPoint  = false
+            graphView.drawNumbers  = false
+            graphView.drawSinCos  = false
+            instructionsBottomLabel.hidden  = true
+            nextButton.hidden  = false
+            paramView.hidden  = true
+            prevButton.hidden  = true
+            settingsView.hidden  = true
+            slider3Name.hidden  = true
+            slider3Slider.hidden  = true
+            slider3Value.hidden  = true
+            slider4Name.hidden  = true
+            slider4Slider.hidden  = true
+            slider4Value.hidden  = true
+            xLabel.hidden  = true
+            xSlider.userInteractionEnabled  = false
+            xSliderAuto  = true
+            yLabel.hidden  = true
+            ySlider.userInteractionEnabled  = false
+            ySliderAuto  = true
             speedSlider.value = 1
             speedSliderAction()
-            clearDrawing()
-            showInstructions()
+            break
+        case 1:
+            graphView.a  = 0
+            graphView.b  = 0
+            graphView.c  = 0
+            graphView.d  = 0
+            graphView.m  = 1
+            graphView.translateSize  = CGPointMake(100, 100)
+            slider1Slider.maximumValue  = 10
+            slider1Slider.minimumValue  = -10
+            slider1Slider.value  = Float(graphView.b)
+            slider2Slider.maximumValue  = -100
+            slider2Slider.minimumValue  = 400
+            slider2Slider.value  = Float(graphView.b)
+            slider3Slider.maximumValue  = 10
+            slider3Slider.minimumValue  = -10
+            slider3Slider.value  = Float(graphView.c)
+            slider4Slider.maximumValue  = 400
+            slider4Slider.minimumValue  = -200
+            slider4Slider.value  = Float(graphView.d)
+            xSlider.value  = -50
+            xValueTicker  = -50
+            ySlider.value  = Float(graphView.yForX(Double(xSlider.value)))
+            instructionsLabel.text  = "Got it? \n\nNow it's your turn. \n\nI will move green and you move the red. \n\n Press Start when your are ready!\n\n\nYou can change the speed of how fast I go below."
+            slider1Name.text  = "m"
+            slider1Value.text  = String(format: "%.1f", graphView.m)
+            slider2Value.text  = String(format: "%.1f", graphView.b)
+            slider3Value.text  = String(format: "%.1f", graphView.c/10)
+            slider4Value.text  = String(format: "%.1f", graphView.d/10)
+            autoXButton.hidden  = true
+            autoYButton.hidden  = false
+            clearDrawingButton.hidden  = false
+            drawingTableView.hidden  = true
+            graphView.drawIntersectionPoint  = false
+            graphView.drawNumbers  = false
+            graphView.drawSinCos  = false
+            instructionsBottomLabel.hidden  = true
+            nextButton.hidden  = false
+            paramView.hidden  = true
+            prevButton.hidden  = false
+            settingsView.hidden  = false
+            slider3Name.hidden  = true
+            slider3Slider.hidden  = true
+            slider3Value.hidden  = true
+            slider4Name.hidden  = true
+            slider4Slider.hidden  = true
+            slider4Value.hidden  = true
+            xLabel.hidden  = true
+            xSlider.userInteractionEnabled  = true
+            xSliderAuto  = false
+            yLabel.hidden  = true
+            ySlider.userInteractionEnabled  = false
+            ySliderAuto  = true
+            break
         case 2:
-            xSliderAuto = true
-            ySliderAuto = false
-            ySlider.userInteractionEnabled = true
-            xSlider.userInteractionEnabled = false
-            instructionsLabel.text = "Great - let's switch! \n\nNow I control the red.\n\nYou control the green.\n\n"
-            clearDrawing()
-            showInstructions()
+            graphView.a  = 0
+            graphView.b  = 0
+            graphView.c  = 0
+            graphView.d  = 0
+            graphView.m  = 1
+            graphView.translateSize  = CGPointMake(100, 100)
+            slider1Slider.maximumValue  = 10
+            slider1Slider.minimumValue  = -10
+            slider1Slider.value  = Float(graphView.b)
+            slider2Slider.maximumValue  = -100
+            slider2Slider.minimumValue  = 400
+            slider2Slider.value  = Float(graphView.b)
+            slider3Slider.maximumValue  = 10
+            slider3Slider.minimumValue  = -10
+            slider3Slider.value  = Float(graphView.c)
+            slider4Slider.maximumValue  = 400
+            slider4Slider.minimumValue  = -200
+            slider4Slider.value  = Float(graphView.d)
+            xSlider.value  = -50
+            xValueTicker  = -50
+            ySlider.value  = Float(graphView.yForX(Double(xSlider.value)))
+            instructionsLabel.text  = "Great - let's switch! \n\nNow I control the red.\n\nYou control the green.\n\n"
+            slider1Name.text  = "m"
+            slider1Value.text  = String(format: "%.1f", graphView.m)
+            slider2Value.text  = String(format: "%.1f", graphView.b)
+            slider3Value.text  = String(format: "%.1f", graphView.c/10)
+            slider4Value.text  = String(format: "%.1f", graphView.d/10)
+            autoXButton.hidden  = false
+            autoYButton.hidden  = true
+            clearDrawingButton.hidden  = false
+            drawingTableView.hidden  = true
+            graphView.drawIntersectionPoint  = false
+            graphView.drawNumbers  = false
+            graphView.drawSinCos  = false
+            instructionsBottomLabel.hidden  = true
+            nextButton.hidden  = false
+            paramView.hidden  = true
+            prevButton.hidden  = false
+            settingsView.hidden  = false
+            slider3Name.hidden  = true
+            slider3Slider.hidden  = true
+            slider3Value.hidden  = true
+            slider4Name.hidden  = true
+            slider4Slider.hidden  = true
+            slider4Value.hidden  = true
+            xLabel.hidden  = true
+            xSlider.userInteractionEnabled  = false
+            xSliderAuto  = true
+            yLabel.hidden  = true
+            ySlider.userInteractionEnabled  = true
+            ySliderAuto  = false
+            break
         case 3:
-            intructionsBottomLabel.hidden = false
-            graphView.m = 1
-            graphView.b = 0
-            graphView.drawSinCos = false
-            graphView.drawNumbers = true
-            graphView.drawIntersectionPoint = false
-            phase1Button.hidden = false
-            phase1View.hidden = false
-            phase1Button.hidden = false
-            phase1View.hidden = false
-            phase3Button.hidden = false
-            phase3View.hidden = false
-            paramView.hidden = true
-            settingsView.hidden = false
-            speedSlider.value = 1
-            xValueTicker = -50
-            xSliderAuto = false
-            ySliderAuto = false
-            ySlider.userInteractionEnabled = true
-            xSlider.userInteractionEnabled = true
-            xLabel.hidden = false
-            yLabel.hidden = false
-            drawingTableView.hidden = false
-            autoXButton.hidden = false
-            autoYButton.hidden = false
-            phase2Button.hidden = false
-            phase2View.hidden = false
-            formulaLabel.text = "y = x"
-            instructionsLabel.text = "Awesome!\n\nNow you control both!\n\nNotice we now see numbers all over.\n\nX axis is RED and the Y axis is GREEN.\n\nWe can see values for your drawing.\n\nWe can see the formula of the blue line!"
-            speedSlider.value = 1
-            speedSliderAction()
-            clearDrawing()
-            showInstructions()
+            graphView.a  = 0
+            graphView.b  = 0
+            graphView.c  = 0
+            graphView.d  = 0
+            graphView.m  = 1
+            graphView.translateSize  = CGPointMake(100, 100)
+            slider1Slider.maximumValue  = 10
+            slider1Slider.minimumValue  = -10
+            slider1Slider.value  = Float(graphView.b)
+            slider2Slider.maximumValue  = -100
+            slider2Slider.minimumValue  = 400
+            slider2Slider.value  = Float(graphView.b)
+            slider3Slider.maximumValue  = 10
+            slider3Slider.minimumValue  = -10
+            slider3Slider.value  = Float(graphView.c)
+            slider4Slider.maximumValue  = 400
+            slider4Slider.minimumValue  = -200
+            slider4Slider.value  = Float(graphView.d)
+            xSlider.value  = -50
+            xValueTicker  = -50
+            ySlider.value  = Float(graphView.yForX(Double(xSlider.value)))
+            instructionsLabel.text  = "Awesome!\n\nNow you control both!\n\nNotice we now see numbers all over.\n\nX axis is RED and the Y axis is GREEN.\n\nWe can see values for your drawing.\n\nWe can see the formula of the blue line!"
+            instructionsBottomLabel.text = "You now control both RED and GREEN.\n\n Explore more graphs!\n Click on the blue buttons on the right!"
+            slider1Name.text  = "m"
+            slider1Value.text  = String(format: "%.1f", graphView.m)
+            slider2Value.text  = String(format: "%.1f", graphView.b)
+            slider3Value.text  = String(format: "%.1f", graphView.c/10)
+            slider4Value.text  = String(format: "%.1f", graphView.d/10)
+            autoXButton.hidden  = false
+            autoYButton.hidden  = false
+            clearDrawingButton.hidden  = false
+            drawingTableView.hidden  = false
+            graphView.drawIntersectionPoint  = false
+            graphView.drawNumbers  = true
+            graphView.drawSinCos  = false
+            instructionsBottomLabel.hidden  = false
+            nextButton.hidden  = false
+            paramView.hidden  = true
+            prevButton.hidden  = false
+            settingsView.hidden  = false
+            slider3Name.hidden  = true
+            slider3Slider.hidden  = true
+            slider3Value.hidden  = true
+            slider4Name.hidden  = true
+            slider4Slider.hidden  = true
+            slider4Value.hidden  = true
+            xLabel.hidden  = false
+            xSlider.userInteractionEnabled  = true
+            xSliderAuto  = false
+            yLabel.hidden  = false
+            ySlider.userInteractionEnabled  = true
+            ySliderAuto  = false
+            break
         case 4:
-            intructionsBottomLabel.hidden = true
-            graphView.drawNumbers = true
-            graphView.drawIntersectionPoint = true
-            graphView.drawSinCos = false
-            graphView.m = 2.4
-            graphView.b = 150
-            xSlider.value = -75
-            ySlider.value = Float(graphView.yForX(Double(xSlider.value)))
-            instructionsLabel.text = "Change parameters of the blue line\n\nPlay around with the sliders.\n\n Try to notice what changes."
-            slider1Name.text = "m"
-            slider2Name.text = "b"
-            slider1Slider.value = Float(graphView.m)
-            slider1Slider.minimumValue = -10
-            slider1Slider.maximumValue = 10
-            slider2Slider.value = Float(graphView.b)
-            slider2Slider.minimumValue = -100
-            slider2Slider.maximumValue = 400
-            slider1Value.text = String(format: "%.1f", graphView.m)
-            slider2Value.text = String(format: "%.1f", graphView.b/10)
-            slider3Slider.hidden = true
-            slider4Slider.hidden = true
-            slider3Name.hidden = true
-            slider4Name.hidden = true
-            slider3Value.hidden = true
-            slider4Value.hidden = true
-            phase3Button.hidden = false
-            phase3View.hidden = false
-            paramView.hidden = false
-            clearDrawing()
-            writeFormulas()
-            showInstructions()
+            graphView.a  = 0
+            graphView.b  = 150
+            graphView.c  = 0
+            graphView.d  = 0
+            graphView.m  = 0.2
+            graphView.translateSize  = CGPointMake(100, 100)
+            slider1Slider.maximumValue  = 10
+            slider1Slider.minimumValue  = -10
+            slider1Slider.value  = Float(graphView.b)
+            slider2Slider.maximumValue  = -100
+            slider2Slider.minimumValue  = 400
+            slider2Slider.value  = Float(graphView.b)
+            slider3Slider.maximumValue  = 10
+            slider3Slider.minimumValue  = -10
+            slider3Slider.value  = Float(graphView.c)
+            slider4Slider.maximumValue  = 400
+            slider4Slider.minimumValue  = -200
+            slider4Slider.value  = Float(graphView.d)
+            xSlider.value  = -50
+            xValueTicker  = -50
+            ySlider.value  = Float(graphView.yForX(Double(xSlider.value)))
+            instructionsLabel.text  = "Change parameters of the blue line\n\nPlay around with the sliders.\n\n Try to notice what changes."
+            slider1Name.text  = "m"
+            slider1Value.text  = String(format: "%.1f", graphView.m)
+            slider2Value.text  = String(format: "%.1f", graphView.b)
+            slider3Value.text  = String(format: "%.1f", graphView.c/10)
+            slider4Value.text  = String(format: "%.1f", graphView.d/10)
+            autoXButton.hidden  = false
+            autoYButton.hidden  = false
+            clearDrawingButton.hidden  = false
+            drawingTableView.hidden  = false
+            graphView.drawIntersectionPoint  = true
+            graphView.drawNumbers  = true
+            graphView.drawSinCos  = false
+            instructionsBottomLabel.hidden  = true
+            nextButton.hidden  = false
+            paramView.hidden  = false
+            prevButton.hidden  = false
+            settingsView.hidden  = false
+            slider3Name.hidden  = true
+            slider3Slider.hidden  = true
+            slider3Value.hidden  = true
+            slider4Name.hidden  = true
+            slider4Slider.hidden  = true
+            slider4Value.hidden  = true
+            xLabel.hidden  = false
+            xSlider.userInteractionEnabled  = true
+            xSliderAuto  = false
+            yLabel.hidden  = false
+            ySlider.userInteractionEnabled  = true
+            ySliderAuto  = false
+            break
         case 5:
-            intructionsBottomLabel.hidden = true
-            graphView.drawSinCos = true
-            graphView.drawNumbers = true
-            instructionsLabel.text = "Sin waves!\n\nMany parameters to play with."
-            paramView.hidden = false
-            
-            graphView.translateSize = CGPointMake(150, graphView.frame.height/2)
-
-            graphView.a = 100.0
-            graphView.b = 0.01
-            graphView.c = 0.0
-            graphView.d = 0.0
-            xSlider.value = -100
-            ySlider.value = Float(graphView.yForX(Double(xSlider.value)))
-            
-            slider1Name.text = "a"
-            slider2Name.text = "b"
-            slider3Name.text = "c"
-            slider4Name.text = "d"
-
-            slider1Name.hidden = false
-            slider2Name.hidden = false
-            slider3Name.hidden = false
-            slider4Name.hidden = false
-
-            slider1Slider.hidden = false
-            slider2Slider.hidden = false
-            slider3Slider.hidden = false
-            slider4Slider.hidden = false
-
-            slider1Slider.value = Float(graphView.a)
-            slider2Slider.value = Float(graphView.b)
-            slider3Slider.value = Float(graphView.c)
-            slider4Slider.value = Float(graphView.d)
-
-            slider1Slider.minimumValue = 0
-            slider2Slider.minimumValue = 0
-            slider3Slider.minimumValue = -10
-            slider4Slider.minimumValue = -200
-            
-            slider1Slider.maximumValue = 400
-            slider2Slider.maximumValue = 0.1
-            slider3Slider.maximumValue = 10
-            slider4Slider.maximumValue = 400
-            
-            slider1Value.hidden = false
-            slider2Value.hidden = false
-            slider3Value.hidden = false
-            slider4Value.hidden = false
-            
-            slider1Value.text = String(format: "%.1f", graphView.a/10)
-            slider2Value.text = String(format: "%.1f", graphView.b*10)
-            slider3Value.text = String(format: "%.1f", graphView.c/10)
-            slider4Value.text = String(format: "%.1f", graphView.d/10)
-
-            phase3Button.hidden = false
-            phase3View.hidden = false
-
-            nextButton.hidden = true
-
-            writeFormulas()
-            showInstructions()
-
+            graphView.a  = 100
+            graphView.b  = 0.01
+            graphView.c  = 0.3
+            graphView.d  = 8.0
+            graphView.m  = 1
+            graphView.translateSize  = CGPointMake(150, graphView.frame.height/2)
+            slider1Slider.maximumValue  = 400
+            slider1Slider.minimumValue  = 0
+            slider1Slider.value  = Float(graphView.a)
+            slider2Slider.maximumValue  = 0.1
+            slider2Slider.minimumValue  = 0
+            slider2Slider.value  = Float(graphView.b)
+            slider3Slider.maximumValue  = 10
+            slider3Slider.minimumValue  = -10
+            slider3Slider.value  = Float(graphView.c)
+            slider4Slider.maximumValue  = 400
+            slider4Slider.minimumValue  = -200
+            slider4Slider.value  = Float(graphView.d)
+            xSlider.value  = -100
+            xValueTicker  = -50
+            ySlider.value  = Float(graphView.yForX(Double(xSlider.value)))
+            instructionsLabel.text  = "Sin waves!\n\nMany parameters to play with."
+            slider1Name.text  = "a"
+            slider1Value.text  = String(format: "%.1f", graphView.a/10)
+            slider2Value.text  = String(format: "%.2f", graphView.b*10)
+            slider3Value.text  = String(format: "%.1f", graphView.c/10)
+            slider4Value.text  = String(format: "%.1f", graphView.d/10)
+            autoXButton.hidden  = false
+            autoYButton.hidden  = false
+            clearDrawingButton.hidden  = false
+            drawingTableView.hidden  = false
+            graphView.drawIntersectionPoint  = true
+            graphView.drawNumbers  = true
+            graphView.drawSinCos  = true
+            instructionsBottomLabel.hidden  = true
+            nextButton.hidden  = true
+            paramView.hidden  = false
+            prevButton.hidden  = false
+            settingsView.hidden  = false
+            slider3Name.hidden  = false
+            slider3Slider.hidden  = false
+            slider3Value.hidden  = false
+            slider4Name.hidden  = false
+            slider4Slider.hidden  = false
+            slider4Value.hidden  = false
+            xLabel.hidden  = false
+            xSlider.userInteractionEnabled  = true
+            xSliderAuto  = false
+            yLabel.hidden  = false
+            ySlider.userInteractionEnabled  = true
+            ySliderAuto  = false
+            break
         default:
-            
             break
         }
         
-        // Set slider values
+        // Stage dependent tasks
+        
         xSlider.minimumValue = Float(-graphView.translateSize!.x)
         xSlider.maximumValue = Float(graphView.frame.width) - Float(graphView.translateSize!.x)
         
@@ -714,9 +851,11 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         xLabel.text = String(format: "X: %.1f", xSlider.value/10)
         yLabel.text = String(format: "Y: %.1f", ySlider.value/10)
         
-        graphView.setNeedsDisplay()
+        writeFormulas()
+        showInstructions(false)
+
     }
-    
+
     @IBAction func startButtonAction() {
         switch currentStage {
         case 0:
@@ -752,11 +891,14 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         
         switch currentStage {
         case 0:
-            instructionsLabel.text = "Observe how the red and the green move at the same speed!"
+            instructionsBottomLabel.hidden = false
+            instructionsBottomLabel.text = "Observe how the red and the green move at the same speed!"
         case 1:
-            instructionsLabel.text = "Move the red slider at the same speed as I do."
+            instructionsBottomLabel.hidden = false
+            instructionsBottomLabel.text = "Move the RED slider at the same speed as I do."
         case 2:
-            instructionsLabel.text = "GO!"
+            instructionsBottomLabel.hidden = false
+            instructionsBottomLabel.text = "Move the GREEN slider at the same speed as I do."
         default:
             break
         }
@@ -768,13 +910,10 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         
         switch currentStage {
         case 0:
-            clearDrawing()
             currentStage = 1
         case 1:
-            clearDrawing()
             currentStage = 2
         case 2:
-            clearDrawing()
             currentStage = 3
         default:
             break
