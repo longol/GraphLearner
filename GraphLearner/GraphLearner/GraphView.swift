@@ -155,15 +155,22 @@ class GraphView: UIView {
             CGContextSetFillColorWithColor(context, color.CGColor)
             CGContextSetLineWidth(context, 0.0)
             CGContextDrawPath(context, CGPathDrawingMode.FillStroke)
+            
             if drawIntersectionPoint == true {
                 if drawSinCos == false {
+                    CGContextSetStrokeColorWithColor(context, mainView!.colorA.CGColor)
                     drawTextAt(context, point: CGPointMake(p.x-50, p.y+20), text: String(format: "m: %.1f", m), axis: "m")
+                    CGContextSetStrokeColorWithColor(context, mainView!.colorB.CGColor)
                     drawTextAt(context, point: CGPointMake(p.x-50, p.y+6), text: String(format: "b: %.1f", b/10), axis: "b")
                 }
                 else{
+                    CGContextSetStrokeColorWithColor(context, mainView!.colorA.CGColor)
                     drawTextAt(context, point: CGPointMake(p.x-50, p.y+42), text: String(format: "a: %.1f", a/10), axis: "a")
+                    CGContextSetStrokeColorWithColor(context, mainView!.colorB.CGColor)
                     drawTextAt(context, point: CGPointMake(p.x-50, p.y+30), text: String(format: "b: %.1f", b*10), axis: "bb")
+                    CGContextSetStrokeColorWithColor(context, mainView!.colorC.CGColor)
                     drawTextAt(context, point: CGPointMake(p.x-50, p.y+20), text: String(format: "c: %.1f", c), axis: "c")
+                    CGContextSetStrokeColorWithColor(context, mainView!.colorD.CGColor)
                     drawTextAt(context, point: CGPointMake(p.x-50, p.y+6), text: String(format: "d: %.1f", d/10), axis: "d")
                 }
             }
@@ -310,33 +317,25 @@ class GraphView: UIView {
             attrs = [NSFontAttributeName : UIFont.systemFontOfSize(12.0),
                 NSForegroundColorAttributeName : UIColor.redColor().CGColor]
         }
-        else if axis == "b" {
+        else if axis == "m" || axis == "a" {
             attrs = [NSFontAttributeName : UIFont.boldSystemFontOfSize(12.0),
-                NSForegroundColorAttributeName : UIColor.orangeColor().CGColor]
+                NSForegroundColorAttributeName : mainView!.colorA.CGColor]
         }
-        else if axis == "m" {
+        else if axis == "b" || axis == "bb" {
             attrs = [NSFontAttributeName : UIFont.boldSystemFontOfSize(12.0),
-                NSForegroundColorAttributeName : UIColor.blueColor().CGColor]
-        }
-        else if axis == "a" {
-            attrs = [NSFontAttributeName : UIFont.boldSystemFontOfSize(12.0),
-                NSForegroundColorAttributeName : UIColor.blueColor().CGColor]
-        }
-        else if axis == "bb" {
-            attrs = [NSFontAttributeName : UIFont.boldSystemFontOfSize(12.0),
-                NSForegroundColorAttributeName : UIColor.orangeColor().CGColor]
+                NSForegroundColorAttributeName : mainView!.colorB.CGColor]
         }
         else if axis == "c" {
             attrs = [NSFontAttributeName : UIFont.boldSystemFontOfSize(12.0),
-                NSForegroundColorAttributeName : UIColor.brownColor().CGColor]
+                NSForegroundColorAttributeName : mainView!.colorC.CGColor]
         }
         else if axis == "d" {
             attrs = [NSFontAttributeName : UIFont.boldSystemFontOfSize(12.0),
-                NSForegroundColorAttributeName : UIColor.purpleColor().CGColor]
+                NSForegroundColorAttributeName : mainView!.colorD.CGColor]
         }
         else {
             attrs = [NSFontAttributeName : UIFont.systemFontOfSize(14.0),
-                NSForegroundColorAttributeName : UIColor.redColor().CGColor]
+                NSForegroundColorAttributeName : UIColor.clearColor().CGColor]
         }
 
         CGContextSetTextPosition(context, point.x, point.y);
