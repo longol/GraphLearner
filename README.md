@@ -14,3 +14,5 @@ The interactive graph learner enables students to understand how graphs are draw
 >> Target Audience
 
 8th grade students (currently the common core introduces the most basic form of the equation y=mx+b in the 8th grade)
+
+These changes are present in the new Branch
