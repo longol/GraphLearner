@@ -1,4 +1,6 @@
 # GraphLearner
+> **Status: archived (2016 project).** Swift 2 codebase, kept for reference — it won't build on modern Xcode.
+
 iPad App for 8th graders to learn about graphs.
 
 >> Learning Objective
